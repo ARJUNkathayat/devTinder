@@ -1,25 +1,38 @@
 const express = require("express")
 const app = express()
-app.get("/user/:name/:pwd",(req,res)=>{
-    console.log(req.params)
-    res.send({fname:"Arjun",
-        lname:"Kathayat"
-    })
+
+app.use("/admin",(req,res,next)=>{
+     const token = "xyz"
+      if(token == "xyz"){
+        next();
+    }else{
+        res.status(401).send("Unauthorized access")
+    }
+     
 })
 
-app.get(/^\/ab+cd$/, (req, res) => {
-    res.send("ok");
-  });
+app.use("/user",(req,res,next)=>{
+   
+        res.send("user welcome")
+    
+    
+})
+
+
+app.use("/admin/getData",(req,res,next)=>{
+   
+        res.send("data send")
+    
+    
+})
+
+
+app.use("/admin/deleteData",(req,res,next)=>{
   
-
-app.delete("/user",(req,res)=>{
-    res.send("Delete data successfully")
+        res.send("data deleted")
+    
+    
 })
-app.use("/hello",(req,res)=>{
-    res.send("Konichiwa")
-})
-
-
 
 
 app.listen(7000,()=>{
