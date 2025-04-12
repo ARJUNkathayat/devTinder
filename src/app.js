@@ -1,40 +1,39 @@
 const express = require("express")
 const app = express()
+const connectDb = require("./Config/Database")
+const User = require("./Models/User")
 
-app.use("/admin",(req,res,next)=>{
-     const token = "xyz"
-      if(token == "xyz"){
-        next();
-    }else{
-        res.status(401).send("Unauthorized access")
+
+app.post("/user",async (req,res)=>{
+
+    const userData = {
+        
+        firstName:"Sachin",
+        lastName:"Tendulkar",
+        email:"tendulkarsachin@gmail.com",
+        gender:"Male"
+    
     }
-     
-})
+    const user = new User(userData);
+    try{
+     await user.save()
+     res.send("User  data is added Successfully ")
+    }catch(err){
+        res.status(400).send("Error saving the data")
+    }
+    
 
-app.use("/user",(req,res,next)=>{
-   
-        res.send("user welcome")
-    
-    
-})
 
-
-app.use("/admin/getData",(req,res,next)=>{
-   
-        res.send("data send")
-    
-    
 })
 
 
-app.use("/admin/deleteData",(req,res,next)=>{
-  
-        res.send("data deleted")
-    
-    
-})
 
+connectDb().then(( )=>{
+    console.log("Database connected")
+    app.listen(7000,()=>{
+        console.log("Successfully  running on port 7000")
+    })
+    }).catch(err=>{
+        console.log("Not connected")
+    })
 
-app.listen(7000,()=>{
-    console.log("Successfully  running on port 7000")
-})
