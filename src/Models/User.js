@@ -43,6 +43,7 @@ Userschema.methods.validatePassword = async function (passwordInputByUser) {
   return await bcrypt.compare(passwordInputByUser, this.password);
 };
 
+Userschema.index({firstName:1,lastName:1})
 // ✅ Export model AFTER adding methods
 const User = mongoose.model("User", Userschema);
 module.exports = User;

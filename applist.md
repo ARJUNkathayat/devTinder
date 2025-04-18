@@ -12,7 +12,7 @@ patch/profile/password
 
 
 ++connectionRequestrouter
-post /request/send/ignored/:userid
+post /request/send/intresed/:userid
 post /request/send/ignored/:userid
 post/request/review/accepted/:requestid
 ost/request/review/rejected/:requestid
