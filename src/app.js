@@ -14,10 +14,12 @@ app.use(express.json())
 const authrouter = require("./routes/auth")
 const requestrouter = require("./routes/connections")
 const profilerouter = require("./routes/profile")
+const userRouter = require("./routes/user")
 
 app.use("/",authrouter)
 app.use("/",requestrouter)
 app.use("/",profilerouter)
+app.use("/",userRouter)
 
 
 

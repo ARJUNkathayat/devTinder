@@ -11,13 +11,11 @@ patch/update/profile
 patch/profile/password
 
 
-++connectionRequestrouter
-post /request/send/intresed/:userid
-post /request/send/ignored/:userid
-post/request/review/accepted/:requestid
-ost/request/review/rejected/:requestid
+#connectionRequestrouter
+post /request/send/:status/:userid
+post/request/review/:status/:requestid
 
-userRouter
+#userRouter
 get/user/connections
 get /user/request/received
 get/user/feed
