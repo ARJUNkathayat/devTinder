@@ -2,6 +2,7 @@ const express = require("express");
 const userRouter = express.Router();
 const { userAuth } = require("../Middlewares/auth");
 const ConnectionRequestModel = require("../Models/connectionRequest");
+const User = require("../Models/User");
 
 // ✅ Get all pending connection requests sent *to* the logged-in user
 userRouter.get("/user/request", userAuth, async (req, res) => {
@@ -50,6 +51,46 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+userRouter.get("/feed", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit>50?50:limit;
+    const skip = (page -1 ) * limit;
+
+    // 1. Get all connection requests involving the user
+    const connectionRequests = await ConnectionRequestModel.find({
+      $or: [
+        { toUserId: loggedInUser._id },
+        { fromUserId: loggedInUser._id }
+      ]
+    }).select("fromUserId toUserId");
+
+    // 2. Create a set of userIds to hide from feed
+    const hideUsersFromFeed = new Set();
+    connectionRequests.forEach((req) => {
+      hideUsersFromFeed.add(req.fromUserId.toString());
+      hideUsersFromFeed.add(req.toUserId.toString());
+    });
+
+    // Also hide the logged-in user
+    hideUsersFromFeed.add(loggedInUser._id.toString());
+
+    // 3. Fetch users who are not in hideUsersFromFeed
+    const suggestedUsers = await User.find({
+      _id: { $nin: Array.from(hideUsersFromFeed) }
+    }).select("firstName lastName gender about").skip(skip).limit(limit);
+
+    res.json({
+      message: "Suggested users for your feed",
+      data: suggestedUsers
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
